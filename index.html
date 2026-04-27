@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DR Cheatsheet">
+<meta name="theme-color" content="#0C0C0F">
+<title>DaVinci Resolve Cheatsheet</title>
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+:root{
+  --bg:#0C0C0F;--surface:#141418;--s2:#1C1C22;--s3:#24242C;
+  --border:#2A2A35;--text:#F0F0F5;--t2:#9090A8;--t3:#5A5A70;
+  --accent:#E8602A;--a2:#C44A1A;--green:#3DAA6A;--blue:#3B7DD8;--purple:#8B5CF6;
+  --font:'Trebuchet MS',system-ui,sans-serif;
+  --mono:'Courier New',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+
+/* ── HEADER ── */
+.header{
+  padding:env(safe-area-inset-top, 12px) 16px 12px;
+  padding-top:calc(env(safe-area-inset-top, 0px) + 14px);
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  flex-shrink:0;
+  display:flex;align-items:center;gap:10px;
+}
+.logo{
+  width:34px;height:34px;background:var(--accent);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:900;color:#fff;flex-shrink:0;
+  letter-spacing:-0.5px;
+}
+.header-text h1{font-size:17px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+.header-text p{font-size:10px;color:var(--t3);font-family:var(--mono);margin-top:1px}
+
+/* ── TAB NAV ── */
+.tabs-nav{
+  display:flex;border-bottom:1px solid var(--border);
+  overflow-x:auto;scrollbar-width:none;padding:0 12px;
+  flex-shrink:0;background:var(--bg);
+}
+.tabs-nav::-webkit-scrollbar{display:none}
+.tab-btn{
+  padding:11px 12px;font-size:11px;font-weight:700;color:var(--t3);
+  background:none;border:none;cursor:pointer;white-space:nowrap;
+  position:relative;font-family:var(--font);letter-spacing:0.04em;
+  text-transform:uppercase;transition:color .15s;flex-shrink:0;
+}
+.tab-btn.active{color:var(--accent)}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;
+  height:2px;background:var(--accent);border-radius:2px 2px 0 0;
+}
+
+/* ── SCROLL AREA ── */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 80px}
+.section{display:none}.section.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.card-header{padding:11px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.card-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.card-header h3{font-size:12px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;flex:1}
+.chevron{font-size:9px;color:var(--t3);transition:transform .2s;flex-shrink:0}
+.card.open .chevron{transform:rotate(180deg)}
+.card-body{display:none;padding:0 13px 13px}
+.card.open .card-body{display:block}
+
+/* ── BADGES ── */
+.badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;font-family:var(--mono);margin-bottom:9px;letter-spacing:0.04em}
+.b-edit{background:#1A3A5C;color:#5AABFF}
+.b-color{background:#1A3A1A;color:#5ADB8A}
+.b-fair{background:#3A2A1A;color:#FFB84D}
+.b-all{background:#2A1A3A;color:#C084FC}
+
+/* ── MAP ROWS ── */
+.map-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.map-row:last-child{border-bottom:none}
+.map-action{font-size:11.5px;color:var(--t2);flex:1;line-height:1.3}
+.map-note{font-size:9px;font-weight:800;white-space:nowrap;font-family:var(--mono);color:var(--accent)}
+.map-row.anchor .map-note{color:var(--purple)}
+.map-row.anchor .btn-label{color:var(--purple)!important}
+
+/* ── BUTTON VISUALS ── */
+.btn-vis{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;flex-shrink:0;width:54px;min-height:50px}
+.btn-vis svg{display:block}
+.btn-label{font-size:8.5px;color:var(--t3);font-family:var(--mono);text-align:center;line-height:1;white-space:nowrap}
+
+/* ── TIP BOX ── */
+.tip{background:var(--s2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
+.tip p{font-size:11px;color:var(--t2);line-height:1.5}
+.tip strong{color:var(--text);font-weight:700}
+
+/* ── WHEEL GRID ── */
+.wheel-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
+.wheel-card{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:9px}
+.wheel-dot{width:18px;height:18px;border-radius:50%;margin-bottom:5px}
+.wheel-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px}
+.wheel-desc{font-size:10.5px;color:var(--t2);line-height:1.4}
+.wheel-tip{font-size:9.5px;color:var(--accent);margin-top:3px;font-weight:700}
+
+/* ── NODE ROWS ── */
+.node-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.node-row:last-child{border-bottom:none}
+.node-num{width:20px;height:20px;border-radius:5px;background:var(--s3);font-size:10px;font-weight:800;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.node-info{flex:1}.node-name{font-size:11.5px;font-weight:700;margin-bottom:2px}.node-desc{font-size:10.5px;color:var(--t2);line-height:1.4}
+
+/* ── PIPELINE ── */
+.pipeline{display:flex;align-items:center;overflow-x:auto;padding:12px 0;scrollbar-width:none}
+.pipeline::-webkit-scrollbar{display:none}
+.pipe-step{background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;text-align:center;flex-shrink:0}
+.pipe-step.done{border-color:var(--green);background:#0D2218}
+.pipe-step span{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;color:var(--t2)}
+.pipe-step.done span{color:var(--green)}
+.pipe-arrow{color:var(--t3);font-size:11px;padding:0 3px;flex-shrink:0}
+
+/* ── SIMPLE ROWS (no button icons) ── */
+.simple-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)}
+.simple-row:last-child{border-bottom:none}
+.chip{background:var(--s3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;font-family:var(--mono);color:var(--text);min-width:54px;text-align:center;flex-shrink:0}
+.simple-action{font-size:11.5px;color:var(--t2);flex:1}
+
+/* ── SCOPE ── */
+.scope-row{padding:7px 0;border-bottom:1px solid var(--border)}.scope-row:last-child{border-bottom:none}
+.scope-name{font-size:12px;font-weight:700;margin-bottom:2px}.scope-desc{font-size:11px;color:var(--t2);line-height:1.5}
+.scope-rule{font-size:9.5px;color:var(--accent);margin-top:3px;font-weight:700;font-family:var(--mono)}
+
+/* ── LUFS ── */
+.lufs-bar{background:var(--s2);border-radius:8px;padding:11px;margin-bottom:9px}
+.lufs-label{font-size:10px;color:var(--t3);font-family:var(--mono);margin-bottom:4px}
+.lufs-val{font-size:28px;font-weight:900;color:var(--green);font-family:var(--mono)}
+.lufs-note{font-size:10.5px;color:var(--t2);margin-top:2px}
+
+/* ── SECTION SUBHEADER ── */
+.sub-head{font-size:10px;color:var(--t3);margin-bottom:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-top:8px}
+.sub-head:first-child{margin-top:0}
+
+/* ── INSTALL BANNER ── */
+.install-banner{background:linear-gradient(135deg,#1A1A10,#1A2A10);border:1px solid #3A4A20;border-radius:10px;padding:12px 13px;margin-bottom:10px}
+.install-banner h4{font-size:12px;font-weight:800;color:#AADD55;margin-bottom:6px}
+.install-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
+.install-step:last-child{margin-bottom:0}
+.step-num{width:18px;height:18px;border-radius:50%;background:#3A4A20;color:#AADD55;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.install-step p{font-size:11px;color:#9AB870;line-height:1.4}
+.install-step strong{color:#AADD55}
+</style>
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/apple-touch.png">
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">S</div>
+  <div class="header-text">
+    <h1>DaVinci Resolve Cheatsheet</h1>
+    <p>DaVinci Resolve 20 · TourBox Elite</p>
+  </div>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" onclick="showTab('tourbox',this)">TourBox</button>
+  <button class="tab-btn" onclick="showTab('color',this)">Color</button>
+  <button class="tab-btn" onclick="showTab('pipeline',this)">Pipeline</button>
+  <button class="tab-btn" onclick="showTab('fairlight',this)">Fairlight</button>
+  <button class="tab-btn" onclick="showTab('tips',this)">Tips</button>
+</div>
+
+<div class="scroll-area">
+
+<!-- ══════════════ TOURBOX ══════════════ -->
+<div class="section active" id="tab-tourbox">
+
+  <!-- ALWAYS ON -->
+  <div class="card open">
+    <div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A1A3A">🔒</div><h3>Always-On (Every Page)</h3><span class="chevron">▼</span></div>
+    <div class="card-body">
+      <span class="badge b-all">ALL PAGES</span>
+      <div class="tip" style="margin-bottom:10px"><p>These <strong>never change</strong> regardless of page. Build muscle memory here first.</p></div>
+      <div class="map-row anchor">
+        <div class="btn-vis"><svg width="28" height="30" viewBox="0 0 28 30"><path d="M2 20 Q2 2 14 2 Q26 2 26 20 L26 27 Q26 28 25 28 L3 28 Q2 28 2 27 Z" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><path d="M7 20 Q7 9 14 9 Q21 9 21 20 L21 23 L7 23 Z" fill="#2A1A3A"/></svg><span class="btn-label">SHORT</span></div>
+        <span class="map-action">Play / Pause</span><span class="map-note">ANCHOR</span>
+      </div>
+      <div class="map-row anchor">
+        <div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C1</span></div>
+        <span class="map-action">Undo</span><span class="map-note">ANCHOR</span>
+      </div>
+      <div class="map-row anchor">
+        <div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C2</span></div>
+        <span class="map-action">Redo</span><span class="map-note">ANCHOR</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT PAGE -->
+  <div class="card open">
+    <div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">✂️</div><h3>Edit Page</h3><span class="chevron">▼</span></div>
+    <div class="card-body">
+      <span class="badge b-edit">EDIT</span>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="14" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><circle cx="22" cy="22" r="5" fill="#2A2A3A"/><line x1="22" y1="8" x2="22" y2="14" stroke="#E8602A" stroke-width="2" stroke-linecap="round"/></svg><span class="btn-label">KNOB</span></div><span class="map-action">Shuttle Playback + HoverAdjust on inspector</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="15" fill="#1C1C22" stroke="#2A2A3A" stroke-width="1"/><circle cx="22" cy="22" r="9" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><g stroke="#3A3A50" stroke-width="1.2" stroke-linecap="round"><line x1="22" y1="2" x2="22" y2="6"/><line x1="22" y1="38" x2="22" y2="42"/><line x1="2" y1="22" x2="6" y2="22"/><line x1="38" y1="22" x2="42" y2="22"/><line x1="6.5" y1="6.5" x2="9.3" y2="9.3"/><line x1="34.7" y1="34.7" x2="37.5" y2="37.5"/><line x1="37.5" y1="6.5" x2="34.7" y2="9.3"/><line x1="9.3" y1="34.7" x2="6.5" y2="37.5"/></g></svg><span class="btn-label">DIAL</span></div><span class="map-action">Shuttle Browse (timeline scroll)</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="20" height="38" viewBox="0 0 20 38"><rect x="1" y="1" width="18" height="36" rx="9" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="6" y="9" width="8" height="20" rx="4" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><line x1="10" y1="13" x2="10" y2="16" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="19" x2="10" y2="22" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="25" x2="10" y2="28" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/></svg><span class="btn-label">SCROLL</span></div><span class="map-action">Zoom timeline in/out</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="30" viewBox="0 0 28 30"><path d="M2 20 Q2 2 14 2 Q26 2 26 20 L26 27 Q26 28 25 28 L3 28 Q2 28 2 27 Z" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><path d="M7 20 Q7 9 14 9 Q21 9 21 20 L21 23 L7 23 Z" fill="#2A1A3A"/></svg><span class="btn-label">SHORT</span></div><span class="map-action">Play / Pause</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="14" height="44" viewBox="0 0 14 44"><rect x="1" y="1" width="12" height="42" rx="6" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="4" y="8" width="6" height="28" rx="3" fill="#24242C"/></svg><span class="btn-label">SIDE</span></div><span class="map-action">Normal Edit Mode (A)</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="50" height="14" viewBox="0 0 50 14"><rect x="1" y="1" width="48" height="12" rx="4" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="5" y="4" width="40" height="6" rx="2" fill="#24242C"/></svg><span class="btn-label">TOP</span></div><span class="map-action">Enable / Disable Clip (D)</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="26" height="40" viewBox="0 0 26 40"><rect x="1" y="1" width="24" height="38" rx="5" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="5" y="7" width="16" height="26" rx="3" fill="#24242C"/></svg><span class="btn-label">TALL</span></div><span class="map-action">[ALT] modifier</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C1</span></div><span class="map-action">Undo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C2</span></div><span class="map-action">Redo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="34" height="22" viewBox="0 0 34 22"><path d="M3 21 Q1 1 17 1 Q33 1 31 21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><path d="M8 21 Q7 7 17 7 Q27 7 26 21" fill="#24242C"/></svg><span class="btn-label">TOUR</span></div><span class="map-action">TourMenu Workspace</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="1" width="12" height="13" rx="3" fill="#1A2A1A" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="20,4 17,9 23,9" fill="#3DAA6A"/></svg><span class="btn-label">UP</span></div><span class="map-action">Insert</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="26" width="12" height="13" rx="3" fill="#1A2A1A" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="20,36 17,31 23,31" fill="#3DAA6A"/></svg><span class="btn-label">DOWN</span></div><span class="map-action">Razor</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="1" y="14" width="13" height="12" rx="3" fill="#1A2A1A" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="4,20 9,17 9,23" fill="#3DAA6A"/></svg><span class="btn-label">LEFT</span></div><span class="map-action">Mark In (I)</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="26" y="14" width="13" height="12" rx="3" fill="#1A2A1A" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="36,20 31,17 31,23" fill="#3DAA6A"/></svg><span class="btn-label">RIGHT</span></div><span class="map-action">Mark Out (O)</span></div>
+    </div>
+  </div>
+
+  <!-- COLOR PAGE -->
+  <div class="card">
+    <div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A3A1A">🎨</div><h3>Color Page</h3><span class="chevron">▼</span></div>
+    <div class="card-body">
+      <span class="badge b-color">COLOR</span>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="14" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><circle cx="22" cy="22" r="5" fill="#2A2A3A"/><line x1="22" y1="8" x2="22" y2="14" stroke="#E8602A" stroke-width="2" stroke-linecap="round"/></svg><span class="btn-label">KNOB</span></div><span class="map-action">Shuttle Playback + HoverAdjust</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="15" fill="#1C1C22" stroke="#2A2A3A" stroke-width="1"/><circle cx="22" cy="22" r="9" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><g stroke="#3A3A50" stroke-width="1.2" stroke-linecap="round"><line x1="22" y1="2" x2="22" y2="6"/><line x1="22" y1="38" x2="22" y2="42"/><line x1="2" y1="22" x2="6" y2="22"/><line x1="38" y1="22" x2="42" y2="22"/><line x1="6.5" y1="6.5" x2="9.3" y2="9.3"/><line x1="34.7" y1="34.7" x2="37.5" y2="37.5"/><line x1="37.5" y1="6.5" x2="34.7" y2="9.3"/><line x1="9.3" y1="34.7" x2="6.5" y2="37.5"/></g></svg><span class="btn-label">DIAL</span></div><span class="map-action">Previous / Next clip</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="20" height="38" viewBox="0 0 20 38"><rect x="1" y="1" width="18" height="36" rx="9" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="6" y="9" width="8" height="20" rx="4" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><line x1="10" y1="13" x2="10" y2="16" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="19" x2="10" y2="22" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="25" x2="10" y2="28" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/></svg><span class="btn-label">SCROLL</span></div><span class="map-action">Mouse scroll</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="14" height="44" viewBox="0 0 14 44"><rect x="1" y="1" width="12" height="42" rx="6" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="4" y="8" width="6" height="28" rx="3" fill="#24242C"/></svg><span class="btn-label">SIDE</span></div><span class="map-action">Enable / Disable node</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="30" viewBox="0 0 28 30"><path d="M2 20 Q2 2 14 2 Q26 2 26 20 L26 27 Q26 28 25 28 L3 28 Q2 28 2 27 Z" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><path d="M7 20 Q7 9 14 9 Q21 9 21 20 L21 23 L7 23 Z" fill="#2A1A3A"/></svg><span class="btn-label">SHORT</span></div><span class="map-action">Play / Pause</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C1</span></div><span class="map-action">Undo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C2</span></div><span class="map-action">Redo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="1" width="12" height="13" rx="3" fill="#0D2218" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="20,4 17,9 23,9" fill="#3DAA6A"/></svg><span class="btn-label">UP</span></div><span class="map-action">Add layer node</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="26" width="12" height="13" rx="3" fill="#0D2218" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="20,36 17,31 23,31" fill="#3DAA6A"/></svg><span class="btn-label">DOWN</span></div><span class="map-action">Add parallel node</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="1" y="14" width="13" height="12" rx="3" fill="#0D2218" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="4,20 9,17 9,23" fill="#3DAA6A"/></svg><span class="btn-label">LEFT</span></div><span class="map-action">Add serial before</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="26" y="14" width="13" height="12" rx="3" fill="#0D2218" stroke="#3DAA6A" stroke-width="1.2"/><polygon points="36,20 31,17 31,23" fill="#3DAA6A"/></svg><span class="btn-label">RIGHT</span></div><span class="map-action">Add serial node</span></div>
+    </div>
+  </div>
+
+  <!-- FAIRLIGHT PAGE -->
+  <div class="card">
+    <div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#3A2A1A">🎚️</div><h3>Fairlight Page</h3><span class="chevron">▼</span></div>
+    <div class="card-body">
+      <span class="badge b-fair">FAIRLIGHT</span>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="14" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><circle cx="22" cy="22" r="5" fill="#2A2A3A"/><line x1="22" y1="8" x2="22" y2="14" stroke="#E8602A" stroke-width="2" stroke-linecap="round"/></svg><span class="btn-label">KNOB</span></div><span class="map-action">Shuttle Playback + HoverAdjust</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="21" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><circle cx="22" cy="22" r="15" fill="#1C1C22" stroke="#2A2A3A" stroke-width="1"/><circle cx="22" cy="22" r="9" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><g stroke="#3A3A50" stroke-width="1.2" stroke-linecap="round"><line x1="22" y1="2" x2="22" y2="6"/><line x1="22" y1="38" x2="22" y2="42"/><line x1="2" y1="22" x2="6" y2="22"/><line x1="38" y1="22" x2="42" y2="22"/><line x1="6.5" y1="6.5" x2="9.3" y2="9.3"/><line x1="34.7" y1="34.7" x2="37.5" y2="37.5"/><line x1="37.5" y1="6.5" x2="34.7" y2="9.3"/><line x1="9.3" y1="34.7" x2="6.5" y2="37.5"/></g></svg><span class="btn-label">DIAL</span></div><span class="map-action">Shuttle Browse (timeline)</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="20" height="38" viewBox="0 0 20 38"><rect x="1" y="1" width="18" height="36" rx="9" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="6" y="9" width="8" height="20" rx="4" fill="#24242C" stroke="#3A3A50" stroke-width="1"/><line x1="10" y1="13" x2="10" y2="16" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="19" x2="10" y2="22" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/><line x1="10" y1="25" x2="10" y2="28" stroke="#4A4A60" stroke-width="1.2" stroke-linecap="round"/></svg><span class="btn-label">SCROLL</span></div><span class="map-action">Zoom timeline</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="14" height="44" viewBox="0 0 14 44"><rect x="1" y="1" width="12" height="42" rx="6" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="4" y="8" width="6" height="28" rx="3" fill="#24242C"/></svg><span class="btn-label">SIDE</span></div><span class="map-action">Mute selected track</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="50" height="14" viewBox="0 0 50 14"><rect x="1" y="1" width="48" height="12" rx="4" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="5" y="4" width="40" height="6" rx="2" fill="#24242C"/></svg><span class="btn-label">TOP</span></div><span class="map-action">Solo selected track</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="26" height="40" viewBox="0 0 26 40"><rect x="1" y="1" width="24" height="38" rx="5" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.5"/><rect x="5" y="7" width="16" height="26" rx="3" fill="#24242C"/></svg><span class="btn-label">TALL</span></div><span class="map-action">Timeline Start (Home)</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="30" viewBox="0 0 28 30"><path d="M2 20 Q2 2 14 2 Q26 2 26 20 L26 27 Q26 28 25 28 L3 28 Q2 28 2 27 Z" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><path d="M7 20 Q7 9 14 9 Q21 9 21 20 L21 23 L7 23 Z" fill="#2A1A3A"/></svg><span class="btn-label">SHORT</span></div><span class="map-action">Play / Pause</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C1</span></div><span class="map-action">Undo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row anchor"><div class="btn-vis"><svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="13" fill="#1C0D2A" stroke="#8B5CF6" stroke-width="1.5"/><circle cx="14" cy="14" r="8" fill="#2A1A3A" stroke="#5A3A7A" stroke-width="1"/><circle cx="14" cy="14" r="3" fill="#3A2A4A"/></svg><span class="btn-label">C2</span></div><span class="map-action">Redo</span><span class="map-note">ANCHOR</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="1" width="12" height="13" rx="3" fill="#1A1A2A" stroke="#3B7DD8" stroke-width="1.2"/><polygon points="20,4 17,9 23,9" fill="#3B7DD8"/></svg><span class="btn-label">UP</span></div><span class="map-action">Select track above</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="14" y="26" width="12" height="13" rx="3" fill="#1A1A2A" stroke="#3B7DD8" stroke-width="1.2"/><polygon points="20,36 17,31 23,31" fill="#3B7DD8"/></svg><span class="btn-label">DOWN</span></div><span class="map-action">Select track below</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="1" y="14" width="13" height="12" rx="3" fill="#1A1A2A" stroke="#3B7DD8" stroke-width="1.2"/><polygon points="4,20 9,17 9,23" fill="#3B7DD8"/></svg><span class="btn-label">LEFT</span></div><span class="map-action">Jump back 1 sec</span></div>
+      <div class="map-row"><div class="btn-vis"><svg width="40" height="40" viewBox="0 0 40 40"><rect x="14" y="1" width="12" height="38" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="1" y="14" width="38" height="12" rx="3" fill="#1C1C22" stroke="#4A4A60" stroke-width="1.2"/><rect x="15" y="15" width="10" height="10" rx="2" fill="#24242C"/><rect x="26" y="14" width="13" height="12" rx="3" fill="#1A1A2A" stroke="#3B7DD8" stroke-width="1.2"/><polygon points="36,20 31,17 31,23" fill="#3B7DD8"/></svg><span class="btn-label">RIGHT</span></div><span class="map-action">Jump forward 1 sec</span></div>
+    </div>
+  </div>
+
+  <div class="tip"><p><strong>HoverAdjust:</strong> Hover mouse over any inspector control → Knob takes over that parameter. Move mouse away → back to Shuttle Playback.</p></div>
+</div>
+
+<!-- ══════════════ COLOR ══════════════ -->
+<div class="section" id="tab-color">
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A1A3A">⚙️</div><h3>Node Structure</h3><span class="chevron">▼</span></div><div class="card-body">
+    <p class="sub-head">Standard Footage</p>
+    <div class="node-row"><div class="node-num">01</div><div class="node-info"><div class="node-name">Color Correction</div><div class="node-desc">Lift, Gamma, Gain, Temp, Contrast. Fix exposure first before anything else.</div></div></div>
+    <div class="node-row"><div class="node-num">02</div><div class="node-info"><div class="node-name">LUT</div><div class="node-desc">Apply LUT here. Dial back Key Output Gain — don't crush the image.</div></div></div>
+    <div class="node-row"><div class="node-num">03</div><div class="node-info"><div class="node-name">Final Tweaks</div><div class="node-desc">Saturation, small adjustments. Often left untouched.</div></div></div>
+    <p class="sub-head">iLog Footage (Ace Pro 2)</p>
+    <div class="node-row"><div class="node-num">01</div><div class="node-info"><div class="node-name">Subtle Exposure</div><div class="node-desc">Light correction before LUT. iLog is flat — don't go heavy here.</div></div></div>
+    <div class="node-row"><div class="node-num">02</div><div class="node-info"><div class="node-name">LUT</div><div class="node-desc">Insta360 official LUT or Ben Claremont LUTs.</div></div></div>
+    <div class="node-row"><div class="node-num">03</div><div class="node-info"><div class="node-name">Final Tweaks</div><div class="node-desc">Usually minimal — iLog LUTs are well-balanced already.</div></div></div>
+  </div></div>
+
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A1A">🔵</div><h3>Color Wheels</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="wheel-grid">
+      <div class="wheel-card"><div class="wheel-dot" style="background:linear-gradient(135deg,#1a1a3a,#3a3a6a)"></div><div class="wheel-name">Lift</div><div class="wheel-desc">Shadows — darkest parts of your image.</div><div class="wheel-tip">Left = crush blacks · Right = matte</div></div>
+      <div class="wheel-card"><div class="wheel-dot" style="background:linear-gradient(135deg,#2a3a2a,#5a8a5a)"></div><div class="wheel-name">Gamma</div><div class="wheel-desc">Midtones — between shadows and highlights.</div><div class="wheel-tip">Most visible brightness change</div></div>
+      <div class="wheel-card"><div class="wheel-dot" style="background:linear-gradient(135deg,#3a2a1a,#D4A017)"></div><div class="wheel-name">Gain</div><div class="wheel-desc">Highlights — the brightest parts.</div><div class="wheel-tip">Watch waveform — don't clip 1023</div></div>
+      <div class="wheel-card"><div class="wheel-dot" style="background:linear-gradient(135deg,#3a1a1a,#E8602A)"></div><div class="wheel-name">Offset</div><div class="wheel-desc">Moves everything at once — all tones together.</div><div class="wheel-tip">Quick overall exposure shifts</div></div>
+    </div>
+    <div class="tip"><p><strong>Temp</strong> = warm/cool · <strong>Contrast</strong> = darks vs brights · <strong>Saturation</strong> = color intensity. Don't chase numbers — chase the image.</p></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">📊</div><h3>Scopes</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="scope-row"><div class="scope-name">Waveform</div><div class="scope-desc">Shows brightness left→right of your image. Bottom = shadows, top = highlights.</div><div class="scope-rule">Nothing crushed at 0. Nothing clipping at 1023.</div></div>
+    <div class="scope-row"><div class="scope-name">Vectorscope</div><div class="scope-desc">Shows color — hue and saturation in a circle. Center = no color. Further out = more saturated. Skin tones follow the 11 o'clock line.</div><div class="scope-rule">— Coming up next in lessons</div></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A2A1A">🎬</div><h3>Your LUTs</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip">DBD</span><span class="simple-action">Horror 03 · Key Output 0.804</span></div>
+    <div class="simple-row"><span class="chip">Valorant</span><span class="simple-action">Seven LUT · Key Output 0.433</span></div>
+    <div class="simple-row"><span class="chip">Oogie iLog</span><span class="simple-action">Insta360 Official LUT</span></div>
+    <div class="tip" style="margin-top:10px;margin-bottom:0"><p><strong>Key Output Gain</strong> = LUT strength. Lower = more of your original image shows through.</p></div>
+  </div></div>
+</div>
+
+<!-- ══════════════ PIPELINE ══════════════ -->
+<div class="section" id="tab-pipeline">
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A3A1A">✅</div><h3>Full Pipeline</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="pipeline">
+      <div class="pipe-step done"><span>Media</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-step done"><span>Edit</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-step done"><span>Color</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-step done"><span>Fairlight</span></div><div class="pipe-arrow">→</div>
+      <div class="pipe-step done"><span>Deliver</span></div>
+    </div>
+    <div class="tip" style="margin-top:10px"><p>Full pipeline completed. All green ✅</p></div>
+  </div></div>
+
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">📁</div><h3>Media Page Setup</h3><span class="chevron">▼</span></div><div class="card-body">
+    <p class="sub-head">Always create these 5 bins first</p>
+    <div class="simple-row"><span class="chip">📹</span><span class="simple-action">Footage</span></div>
+    <div class="simple-row"><span class="chip">🎬</span><span class="simple-action">B-Roll</span></div>
+    <div class="simple-row"><span class="chip">🎵</span><span class="simple-action">Music</span></div>
+    <div class="simple-row"><span class="chip">🖼️</span><span class="simple-action">Graphics</span></div>
+    <div class="simple-row"><span class="chip">📤</span><span class="simple-action">Exports</span></div>
+    <div class="tip" style="margin-top:10px;margin-bottom:0"><p>Name the project immediately. Check metadata before editing. Match timeline to clip settings when prompted.</p></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A2A1A">📤</div><h3>Deliver Presets</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip" style="font-size:9px">Medal</span><span class="simple-action">YouTube 1080p preset</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Ace Pro 2</span><span class="simple-action">4K YouTube · 80,000 Kbps · H.264</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">TikTok</span><span class="simple-action">TikTok 1080p preset</span></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A1A">⌨️</div><h3>Key Shortcuts</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip">Home</span><span class="simple-action">Jump to timeline start</span></div>
+    <div class="simple-row"><span class="chip">Shift+Z</span><span class="simple-action">Fit timeline to screen</span></div>
+    <div class="simple-row"><span class="chip">Alt+X</span><span class="simple-action">Clear In and Out points</span></div>
+    <div class="simple-row"><span class="chip">B</span><span class="simple-action">Blade / Razor tool</span></div>
+    <div class="simple-row"><span class="chip">A</span><span class="simple-action">Selection tool</span></div>
+    <div class="simple-row"><span class="chip">I</span><span class="simple-action">Mark In</span></div>
+    <div class="simple-row"><span class="chip">O</span><span class="simple-action">Mark Out</span></div>
+  </div></div>
+</div>
+
+<!-- ══════════════ FAIRLIGHT ══════════════ -->
+<div class="section" id="tab-fairlight">
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A3A2A">🎯</div><h3>Target Levels</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="lufs-bar"><div class="lufs-label">YOUTUBE TARGET</div><div class="lufs-val">-14 LUFS</div><div class="lufs-note">Integrated loudness — check at end of mix</div></div>
+    <div class="tip"><p><strong>Headphone Lab VST</strong> on Bus 1 — DT 770 Pro 250Ω calibration active. Safe Mode depends on amp power (Schiit Magni).</p></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A1A1A">🔇</div><h3>Noise Reduction</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="node-row"><div class="node-num">1</div><div class="node-info"><div class="node-name">Open Mixer Panel</div><div class="node-desc">Find the NR button on the track. Click to open settings.</div></div></div>
+    <div class="node-row"><div class="node-num">2</div><div class="node-info"><div class="node-name">Find a silent moment</div><div class="node-desc">Playhead on background noise only — no talking, no action.</div></div></div>
+    <div class="node-row"><div class="node-num">3</div><div class="node-info"><div class="node-name">Learn noise profile</div><div class="node-desc">Hit Learn. Resolve samples that silence as the noise floor.</div></div></div>
+    <div class="node-row"><div class="node-num">4</div><div class="node-info"><div class="node-name">Apply and check</div><div class="node-desc">Don't over-reduce — audio can go robotic.</div></div></div>
+    <div class="tip" style="margin-top:10px;margin-bottom:0"><p>Different environments = <strong>separate tracks, separate noise profiles.</strong></p></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">🎛️</div><h3>EQ Tips</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip">240 Hz</span><span class="simple-action">Hollow/boomy bass — cut here</span></div>
+    <div class="simple-row"><span class="chip">2–4 kHz</span><span class="simple-action">Harsh vocals — sweep to find and cut</span></div>
+    <div class="simple-row"><span class="chip">6 kHz</span><span class="simple-action">Harsh highs — cut slightly</span></div>
+    <div class="tip" style="margin-top:10px;margin-bottom:0"><p><strong>Sweep technique:</strong> Boost a band high, sweep slowly until it sounds worst, then cut that frequency.</p></div>
+  </div></div>
+</div>
+
+<!-- ══════════════ TIPS ══════════════ -->
+<div class="section" id="tab-tips">
+  <div class="install-banner">
+    <h4>📱 Add to Home Screen</h4>
+    <div class="install-step"><div class="step-num">1</div><p>Open this file in <strong>Chrome</strong> on your phone</p></div>
+    <div class="install-step"><div class="step-num">2</div><p>Tap the <strong>three-dot menu</strong> (top right)</p></div>
+    <div class="install-step"><div class="step-num">3</div><p>Tap <strong>"Add to Home Screen"</strong></p></div>
+    <div class="install-step"><div class="step-num">4</div><p>Opens full-screen, no browser bar — works <strong>100% offline</strong></p></div>
+  </div>
+
+  <div class="card open"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A1A1A">⚠️</div><h3>Things to Remember</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="tip"><p><strong>Grab a still before risky operations.</strong> Saved a grade when Apply Grade wiped node work.</p></div>
+    <div class="tip"><p><strong>HoverAdjust is always listening.</strong> If a clip is selected and inspector is open, the Knob will move sliders. Know what's selected.</p></div>
+    <div class="tip"><p><strong>Apply Grade from Gallery</strong> is the preferred method for copying grades between clips — not copy/paste.</p></div>
+    <div class="tip"><p><strong>Don't chase numbers, chase the image.</strong> Scopes are guides, not rules.</p></div>
+    <div class="tip"><p><strong>Medal grain at 720p</strong> was low bitrate. Now 1080p/60fps/50M/H.264 — future clips will be clean.</p></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A3A1A">🗺️</div><h3>Roadmap (Next Up)</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip" style="color:#3DAA6A;border-color:#3DAA6A">→</span><span class="simple-action">Vectorscope</span></div>
+    <div class="simple-row"><span class="chip" style="color:#3DAA6A;border-color:#3DAA6A">→</span><span class="simple-action">Fusion — motion graphics & titles</span></div>
+    <div class="simple-row"><span class="chip" style="color:#3DAA6A;border-color:#3DAA6A">→</span><span class="simple-action">Independent grading practice</span></div>
+    <div class="simple-row"><span class="chip" style="color:#3DAA6A;border-color:#3DAA6A">→</span><span class="simple-action">TourBox muscle memory</span></div>
+  </div></div>
+
+  <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">📹</div><h3>Your Gear</h3><span class="chevron">▼</span></div><div class="card-body">
+    <div class="simple-row"><span class="chip" style="font-size:9px">Camera</span><span class="simple-action">Insta360 Ace Pro 2</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Mic</span><span class="simple-action">DJI Mic 2</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Game cap</span><span class="simple-action">Medal · 1080p/60fps/50M/H.264</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">TourBox</span><span class="simple-action">TourBox Elite (Bluetooth)</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Headphones</span><span class="simple-action">Beyerdynamic DT 770 Pro 250Ω</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Amp</span><span class="simple-action">Schiit Magni</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:9px">Drive</span><span class="simple-action">E: drive</span></div>
+  </div></div>
+</div>
+
+</div><!-- end scroll-area -->
+
+<script>
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function tog(header) {
+  header.parentElement.classList.toggle('open');
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(function(reg) { console.log('SW registered:', reg.scope); })
+      .catch(function(err) { console.log('SW registration failed:', err); });
+  });
+}
+</script>
+</body>
+</html>
