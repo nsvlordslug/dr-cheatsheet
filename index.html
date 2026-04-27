@@ -32,11 +32,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
   display:flex;align-items:center;gap:10px;
 }
 .logo{
-  width:34px;height:34px;background:var(--accent);border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;font-weight:900;color:#fff;flex-shrink:0;
-  letter-spacing:-0.5px;
+  width:34px;height:34px;border-radius:9px;
+  flex-shrink:0;overflow:hidden;
 }
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
 .header-text h1{font-size:17px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
 .header-text p{font-size:10px;color:var(--t3);font-family:var(--mono);margin-top:1px}
 
@@ -157,7 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
 <body>
 
 <div class="header">
-  <div class="logo">S</div>
+  <div class="logo"><img src="./icons/icon-192.png" alt="DR"></div>
   <div class="header-text">
     <h1>DaVinci Resolve Cheatsheet</h1>
     <p>DaVinci Resolve 20 · TourBox Elite</p>
