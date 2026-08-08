@@ -9,6 +9,13 @@
 <meta name="apple-mobile-web-app-title" content="DR Cheatsheet">
 <meta name="theme-color" content="#0C0C0F">
 <title>DaVinci Resolve Cheatsheet</title>
+<script>
+(function() {
+  var sizes = ['compact', 'standard', 'large', 'extra-large'];
+  var saved = localStorage.getItem('resolve-reading-size');
+  document.documentElement.dataset.readingSize = sizes.indexOf(saved) === -1 ? 'standard' : saved;
+})();
+</script>
 <style>
 /* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -19,7 +26,12 @@ html,body{height:100%;overflow:hidden}
   --accent:#E8602A;--a2:#C44A1A;--green:#3DAA6A;--blue:#3B7DD8;--purple:#8B5CF6;
   --font:'Trebuchet MS',system-ui,sans-serif;
   --mono:'Courier New',monospace;
+  --reading-scale:1;
+  font-size:calc(16px * var(--reading-scale));
 }
+:root[data-reading-size="compact"]{--reading-scale:.9}
+:root[data-reading-size="large"]{--reading-scale:1.15}
+:root[data-reading-size="extra-large"]{--reading-scale:1.3}
 body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
 
 /* ── HEADER ── */
@@ -36,19 +48,19 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
   flex-shrink:0;overflow:hidden;
 }
 .logo img{width:100%;height:100%;object-fit:cover;display:block}
-.header-text h1{font-size:17px;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
-.header-text p{font-size:10px;color:var(--t3);font-family:var(--mono);margin-top:1px}
+.header-text h1{font-size:1.0625rem;font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+.header-text p{font-size:.625rem;color:var(--t3);font-family:var(--mono);margin-top:1px}
 
 /* ── TAB NAV ── */
 .tabs-nav{
-  display:flex;border-bottom:1px solid var(--border);
-  overflow-x:auto;scrollbar-width:none;padding:0 12px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid var(--border);
+  overflow:visible;padding:0 12px;
   flex-shrink:0;background:var(--bg);
 }
 .tabs-nav::-webkit-scrollbar{display:none}
 .tab-btn{
-  padding:11px 12px;font-size:11px;font-weight:700;color:var(--t3);
-  background:none;border:none;cursor:pointer;white-space:nowrap;
+  padding:11px 12px;font-size:.6875rem;font-weight:700;color:var(--t3);
+  background:none;border:none;cursor:pointer;white-space:normal;
   position:relative;font-family:var(--font);letter-spacing:0.04em;
   text-transform:uppercase;transition:color .15s;flex-shrink:0;
 }
@@ -65,15 +77,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
 /* ── CARDS ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
 .card-header{padding:11px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;user-select:none;-webkit-user-select:none}
-.card-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.card-header h3{font-size:12px;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;flex:1}
-.chevron{font-size:9px;color:var(--t3);transition:transform .2s;flex-shrink:0}
+.card-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0}
+.card-header h3{font-size:.75rem;font-weight:800;letter-spacing:0.03em;text-transform:uppercase;flex:1}
+.chevron{font-size:.5625rem;color:var(--t3);transition:transform .2s;flex-shrink:0}
 .card.open .chevron{transform:rotate(180deg)}
 .card-body{display:none;padding:0 13px 13px}
 .card.open .card-body{display:block}
 
 /* ── BADGES ── */
-.badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;font-family:var(--mono);margin-bottom:9px;letter-spacing:0.04em}
+.badge{display:inline-block;font-size:.5625rem;font-weight:800;padding:2px 7px;border-radius:20px;font-family:var(--mono);margin-bottom:9px;letter-spacing:0.04em}
 .b-edit{background:#1A3A5C;color:#5AABFF}
 .b-color{background:#1A3A1A;color:#5ADB8A}
 .b-fair{background:#3A2A1A;color:#FFB84D}
@@ -86,74 +98,87 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
 /* ── MAP ROWS ── */
 .map-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
 .map-row:last-child{border-bottom:none}
-.map-action{font-size:11.5px;color:var(--t2);flex:1;line-height:1.3}
-.map-note{font-size:9px;font-weight:800;white-space:nowrap;font-family:var(--mono);color:var(--accent)}
+.map-action{font-size:.71875rem;color:var(--t2);flex:1;line-height:1.3}
+.map-note{font-size:.5625rem;font-weight:800;white-space:nowrap;font-family:var(--mono);color:var(--accent)}
 .map-row.anchor .map-note{color:var(--purple)}
 .map-row.anchor .btn-label{color:var(--purple)!important}
-.map-press{display:block;color:var(--t3);font-size:9px;font-family:var(--mono);margin-top:2px;letter-spacing:0.02em}
+.map-press{display:block;color:var(--t3);font-size:.5625rem;font-family:var(--mono);margin-top:2px;letter-spacing:0.02em}
 
 /* ── BUTTON VISUALS ── */
 .btn-vis{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;flex-shrink:0;width:54px;min-height:50px}
 .btn-vis svg{display:block}
-.btn-label{font-size:8.5px;color:var(--t3);font-family:var(--mono);text-align:center;line-height:1;white-space:nowrap}
+.btn-label{font-size:.53125rem;color:var(--t3);font-family:var(--mono);text-align:center;line-height:1;white-space:nowrap}
 
 /* ── TIP BOX ── */
 .tip{background:var(--s2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:9px 11px;margin-bottom:8px}
-.tip p{font-size:11px;color:var(--t2);line-height:1.5}
+.tip p{font-size:.6875rem;color:var(--t2);line-height:1.5}
 .tip strong{color:var(--text);font-weight:700}
 
 /* ── WHEEL GRID ── */
 .wheel-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:9px}
 .wheel-card{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:9px}
 .wheel-dot{width:18px;height:18px;border-radius:50%;margin-bottom:5px}
-.wheel-name{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px}
-.wheel-desc{font-size:10.5px;color:var(--t2);line-height:1.4}
-.wheel-tip{font-size:9.5px;color:var(--accent);margin-top:3px;font-weight:700}
+.wheel-name{font-size:.625rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px}
+.wheel-desc{font-size:.65625rem;color:var(--t2);line-height:1.4}
+.wheel-tip{font-size:.59375rem;color:var(--accent);margin-top:3px;font-weight:700}
 
 /* ── NODE ROWS ── */
 .node-row{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
 .node-row:last-child{border-bottom:none}
-.node-num{width:20px;height:20px;border-radius:5px;background:var(--s3);font-size:10px;font-weight:800;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
-.node-info{flex:1}.node-name{font-size:11.5px;font-weight:700;margin-bottom:2px}.node-desc{font-size:10.5px;color:var(--t2);line-height:1.4}
+.node-num{width:20px;height:20px;border-radius:5px;background:var(--s3);font-size:.625rem;font-weight:800;font-family:var(--mono);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.node-info{flex:1}.node-name{font-size:.71875rem;font-weight:700;margin-bottom:2px}.node-desc{font-size:.65625rem;color:var(--t2);line-height:1.4}
 
 /* ── PIPELINE ── */
 .pipeline{display:flex;align-items:center;overflow-x:auto;padding:12px 0;scrollbar-width:none}
 .pipeline::-webkit-scrollbar{display:none}
 .pipe-step{background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:7px 10px;text-align:center;flex-shrink:0}
 .pipe-step.done{border-color:var(--green);background:#0D2218}
-.pipe-step span{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;color:var(--t2)}
+.pipe-step span{display:block;font-size:.59375rem;font-weight:800;text-transform:uppercase;color:var(--t2)}
 .pipe-step.done span{color:var(--green)}
-.pipe-arrow{color:var(--t3);font-size:11px;padding:0 3px;flex-shrink:0}
+.pipe-arrow{color:var(--t3);font-size:.6875rem;padding:0 3px;flex-shrink:0}
 
 /* ── SIMPLE ROWS (no button icons) ── */
 .simple-row{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border)}
 .simple-row:last-child{border-bottom:none}
-.chip{background:var(--s3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;font-family:var(--mono);color:var(--text);min-width:54px;text-align:center;flex-shrink:0}
-.simple-action{font-size:11.5px;color:var(--t2);flex:1}
+.chip{background:var(--s3);border:1px solid var(--border);border-radius:5px;padding:3px 8px;font-size:.625rem;font-weight:700;font-family:var(--mono);color:var(--text);min-width:54px;text-align:center;flex-shrink:0}
+.simple-action{font-size:.71875rem;color:var(--t2);flex:1}
 
 /* ── SCOPE ── */
 .scope-row{padding:7px 0;border-bottom:1px solid var(--border)}.scope-row:last-child{border-bottom:none}
-.scope-name{font-size:12px;font-weight:700;margin-bottom:2px}.scope-desc{font-size:11px;color:var(--t2);line-height:1.5}
-.scope-rule{font-size:9.5px;color:var(--accent);margin-top:3px;font-weight:700;font-family:var(--mono)}
+.scope-name{font-size:.75rem;font-weight:700;margin-bottom:2px}.scope-desc{font-size:.6875rem;color:var(--t2);line-height:1.5}
+.scope-rule{font-size:.59375rem;color:var(--accent);margin-top:3px;font-weight:700;font-family:var(--mono)}
 
 /* ── LUFS ── */
 .lufs-bar{background:var(--s2);border-radius:8px;padding:11px;margin-bottom:9px}
-.lufs-label{font-size:10px;color:var(--t3);font-family:var(--mono);margin-bottom:4px}
-.lufs-val{font-size:28px;font-weight:900;color:var(--green);font-family:var(--mono)}
-.lufs-note{font-size:10.5px;color:var(--t2);margin-top:2px}
+.lufs-label{font-size:.625rem;color:var(--t3);font-family:var(--mono);margin-bottom:4px}
+.lufs-val{font-size:1.75rem;font-weight:900;color:var(--green);font-family:var(--mono)}
+.lufs-note{font-size:.65625rem;color:var(--t2);margin-top:2px}
 
 /* ── SECTION SUBHEADER ── */
-.sub-head{font-size:10px;color:var(--t3);margin-bottom:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-top:8px}
+.sub-head{font-size:.625rem;color:var(--t3);margin-bottom:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;margin-top:8px}
 .sub-head:first-child{margin-top:0}
 
 /* ── INSTALL BANNER ── */
 .install-banner{background:linear-gradient(135deg,#1A1A10,#1A2A10);border:1px solid #3A4A20;border-radius:10px;padding:12px 13px;margin-bottom:10px}
-.install-banner h4{font-size:12px;font-weight:800;color:#AADD55;margin-bottom:6px}
+.install-banner h4{font-size:.75rem;font-weight:800;color:#AADD55;margin-bottom:6px}
 .install-step{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px}
 .install-step:last-child{margin-bottom:0}
-.step-num{width:18px;height:18px;border-radius:50%;background:#3A4A20;color:#AADD55;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.install-step p{font-size:11px;color:#9AB870;line-height:1.4}
+.step-num{width:18px;height:18px;border-radius:50%;background:#3A4A20;color:#AADD55;font-size:.5625rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.install-step p{font-size:.6875rem;color:#9AB870;line-height:1.4}
 .install-step strong{color:#AADD55}
+
+/* ── DISPLAY SETTINGS ── */
+.display-settings{border:0;min-width:0}
+.display-settings legend{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.display-settings>p{font-size:.6875rem;color:var(--t2);line-height:1.5;margin-bottom:12px}
+.reading-size-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reading-size-option{display:flex;align-items:center;gap:9px;min-width:0;padding:10px;border:1px solid var(--border);border-radius:9px;background:var(--surface);cursor:pointer}
+.reading-size-option.selected{border-color:var(--accent);background:#211712}
+.reading-size-option input{width:18px;height:18px;flex-shrink:0;accent-color:var(--accent)}
+.reading-size-copy{min-width:0}
+.reading-size-copy strong{display:block;font-size:.71875rem;line-height:1.2}
+.reading-size-copy small{display:block;font-size:.5625rem;color:var(--t3);line-height:1.3;margin-top:2px}
+@media (max-width:340px){.reading-size-options{grid-template-columns:1fr}}
 </style>
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icons/apple-touch.png">
@@ -174,9 +199,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
   <button class="tab-btn" onclick="showTab('pipeline',this)">Pipeline</button>
   <button class="tab-btn" onclick="showTab('fairlight',this)">Fairlight</button>
   <button class="tab-btn" onclick="showTab('tips',this)">Tips</button>
+  <button class="tab-btn" onclick="showTab('display',this)">Display</button>
 </div>
 
 <div class="scroll-area">
+
+<!-- ══════════════ DISPLAY ══════════════ -->
+<div class="section" id="tab-display">
+  <fieldset class="display-settings">
+    <legend>Reading Size</legend>
+    <p>Changes text size only. Cards, controls, spacing, and layout stay the same.</p>
+    <div class="reading-size-options">
+      <label class="reading-size-option" data-size="compact"><input type="radio" name="reading-size" value="compact"><span class="reading-size-copy"><strong>Compact</strong><small>90%</small></span></label>
+      <label class="reading-size-option" data-size="standard"><input type="radio" name="reading-size" value="standard"><span class="reading-size-copy"><strong>Standard</strong><small>Default</small></span></label>
+      <label class="reading-size-option" data-size="large"><input type="radio" name="reading-size" value="large"><span class="reading-size-copy"><strong>Large</strong><small>115%</small></span></label>
+      <label class="reading-size-option" data-size="extra-large"><input type="radio" name="reading-size" value="extra-large"><span class="reading-size-copy"><strong>Extra Large</strong><small>130%</small></span></label>
+    </div>
+  </fieldset>
+</div>
 
 <!-- ══════════════ TOURBOX ══════════════ -->
 <div class="section active" id="tab-tourbox">
@@ -371,9 +411,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
   </div></div>
 
   <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#2A2A1A">📤</div><h3>Deliver Presets</h3><span class="chevron">▼</span></div><div class="card-body">
-    <div class="simple-row"><span class="chip" style="font-size:9px">Medal</span><span class="simple-action">YouTube 1080p preset</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Ace Pro 2</span><span class="simple-action">4K YouTube · 80,000 Kbps · H.264</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">TikTok</span><span class="simple-action">TikTok 1080p preset</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Medal</span><span class="simple-action">YouTube 1080p preset</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Ace Pro 2</span><span class="simple-action">4K YouTube · 80,000 Kbps · H.264</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">TikTok</span><span class="simple-action">TikTok 1080p preset</span></div>
   </div></div>
 
   <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A1A">⌨️</div><h3>Key Shortcuts</h3><span class="chevron">▼</span></div><div class="card-body">
@@ -436,13 +476,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);display:flex
   </div></div>
 
   <div class="card"><div class="card-header" onclick="tog(this)"><div class="card-icon" style="background:#1A2A3A">📹</div><h3>Your Gear</h3><span class="chevron">▼</span></div><div class="card-body">
-    <div class="simple-row"><span class="chip" style="font-size:9px">Camera</span><span class="simple-action">Insta360 Ace Pro 2</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Mic</span><span class="simple-action">DJI Mic 2</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Game cap</span><span class="simple-action">Medal · 1080p/60fps/50M/H.264</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">TourBox</span><span class="simple-action">TourBox Elite (Bluetooth)</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Headphones</span><span class="simple-action">Beyerdynamic DT 770 Pro 250Ω</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Amp</span><span class="simple-action">Schiit Magni</span></div>
-    <div class="simple-row"><span class="chip" style="font-size:9px">Drive</span><span class="simple-action">E: drive</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Camera</span><span class="simple-action">Insta360 Ace Pro 2</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Mic</span><span class="simple-action">DJI Mic 2</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Game cap</span><span class="simple-action">Medal · 1080p/60fps/50M/H.264</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">TourBox</span><span class="simple-action">TourBox Elite (Bluetooth)</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Headphones</span><span class="simple-action">Beyerdynamic DT 770 Pro 250Ω</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Amp</span><span class="simple-action">Schiit Magni</span></div>
+    <div class="simple-row"><span class="chip" style="font-size:.5625rem">Drive</span><span class="simple-action">E: drive</span></div>
   </div></div>
 </div>
 
@@ -458,6 +498,21 @@ function showTab(id, el) {
 function tog(header) {
   header.parentElement.classList.toggle('open');
 }
+var readingSizes = ['compact', 'standard', 'large', 'extra-large'];
+function applyReadingSize(size, persist) {
+  var normalized = readingSizes.indexOf(size) === -1 ? 'standard' : size;
+  document.documentElement.dataset.readingSize = normalized;
+  document.querySelectorAll('.reading-size-option').forEach(function(option) {
+    var selected = option.dataset.size === normalized;
+    option.classList.toggle('selected', selected);
+    option.querySelector('input').checked = selected;
+  });
+  if (persist) localStorage.setItem('resolve-reading-size', normalized);
+}
+document.querySelectorAll('input[name="reading-size"]').forEach(function(input) {
+  input.addEventListener('change', function() { applyReadingSize(input.value, true); });
+});
+applyReadingSize(document.documentElement.dataset.readingSize, false);
 </script>
 
 <script>
